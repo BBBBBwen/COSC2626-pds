@@ -1,0 +1,69 @@
+.div1 {
+    float:left;
+    width: 30%;
+    height:200px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-buttom: 10px
+}
+
+.div2 {
+    float:left;
+    width: 30%;
+    height:200px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-buttom: 10px
+}
+
+.div3 {
+    float:left;
+    width: 30%;
+    height:200px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-buttom: 10px
+}
+
+.link {
+
+    font: bold 20px arial;
+    height: 50px;
+    width: 100px;
+    background-color: white;
+    border: none;
+    text-align: center;
+}
+
+.tab {
+    float: left;
+    position: relative;
+    align-items: center;
+    left: 80px;
+    width: 400px;
+    height: 80px;
+}
+
+html, body {
+    height: 100%;
+}
+
+main {
+    flex:auto;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+footer {
+    flex-shrink: 0;
+}
+
+li {
+    margin-right: 10px;
+}

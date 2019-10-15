@@ -1,0 +1,20 @@
+runtime: php55
+api_version: 0.5
+
+handlers:
+- url: /css
+  static_dir: css
+
+- url: /data/(.+\.php)$
+  script: /data/\1
+
+- url: /(.+\.php)$
+  script: /\1
+
+- url: /.*
+  script: index.php
+
+env_variables:
+  CLOUDSQL_DSN:  mysql:dbname=pdsData;unix_socket=/cloudsql/cosc2626-pds:australia-southeast1:cosc2626-pds
+  CLOUDSQL_USER: root
+  CLOUDSQL_PASSWORD: 123456

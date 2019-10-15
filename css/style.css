@@ -1,0 +1,15 @@
+li {
+    margin-right: 10px;
+}
+
+.input_box {
+    margin-bottom: 10px;
+}
+
+.alert {
+    color: red;
+}
+
+.success {
+    color: blue;
+}

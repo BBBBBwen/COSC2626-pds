@@ -1,0 +1,71 @@
+.bgdc {
+    display: none;
+    font-family: 'Courier New', Courier, monospace;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.main1 {
+    background: snow;
+    width: 300px;
+    height: fit-content;
+    margin: 12% auto;
+    overflow: auto;
+}
+
+.close {
+    font: bold 25px caption;
+    padding: 10px;
+    background: indianred;
+}
+
+.close-button {
+    float: right;
+    cursor: pointer;
+    padding-right: 15px;
+}
+
+.main2 {
+    background: snow;
+    padding: 20px;
+}
+
+a {
+    color: rgb(1, 8, 10);
+    text-decoration: none;
+}
+
+.alignt {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.btn {
+    margin-top: 10px;
+    height: 25px;
+    width: 100%;
+    background-color: indianred;
+    border: inherit;
+}
+
+.input {
+    border: 1px solid #dad8de;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+.link {
+    display: grid;
+    float: left;
+    align-items: center;
+    background-color: inherit;
+    font: bold 20px cursive;
+    height: inherit;
+    width: 100px;
+    border: none;
+}
