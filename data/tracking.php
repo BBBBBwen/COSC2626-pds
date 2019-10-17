@@ -3,7 +3,7 @@ session_start();
 require 'connectDB.php';
 function tracking($db) {
     if(isset($_SESSION['id'])) {
-        $geocodeFromLatLong = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=".$_COOKIE['co']."&sensor=false&key=AIzaSyB4VlCHHZgZ1rrsEY9S-LtYdMz-f858Dig");
+        $geocodeFromLatLong = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=".$_COOKIE['co']."&sensor=false&key=AIzaSyAtgbDVO3hASMchsL0gyj4b-Itpg5_u-_o");
         $output = json_decode($geocodeFromLatLong);
         $status = $output->status;
         $address = ($status=="OK")?$output->results[1]->formatted_address:'';

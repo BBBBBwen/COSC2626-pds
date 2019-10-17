@@ -1,13 +1,11 @@
 <?php
 require 'connectDB.php';
-require_once 'google/appengine/api/mail/Message.php';
-use google\appengine\api\mail\Message;
+//use google\appengine\api\mail\Message;
 
 $sql = "SELECT * FROM customers;";
 $stmt = $db->prepare($sql);
 $stmt->execute();
-$customers = $stmt->fetch(PDO::FETCH_ASSOC);
-foreach($customers as $customer) {
+while($customer = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $to = "bowen0225@gmail.com";
 
     $message = "
@@ -45,17 +43,17 @@ foreach($customers as $customer) {
 
     $headers .= "From: ParcelDeliverSystem\r\n";
 
-    try {
-        $mail = new Message();
-        $mail->setSender('bowen0225@gmail.com');
-        $mail->addTo("527441877@qq.com");
-        $mail->setSubject("Monthly Invoice");
-        $mail->setTextBody($message);
-        $mail->send();
-        echo 'Mail Sent';
-    } catch (InvalidArgumentException $e) {
-        echo 'There was an error';
-    }
+//    try {
+//        $mail = new Message();
+//        $mail->setSender('bowen0225@gmail.com');
+//        $mail->addTo("527441877@qq.com");
+//        $mail->setSubject("Monthly Invoice");
+//        $mail->setTextBody($message);
+//        $mail->send();
+//        echo 'Mail Sent';
+//    } catch (InvalidArgumentException $e) {
+//        echo 'There was an error';
+//    }
 
     $file = fopen('gs://cosc2626-bucket/MonthlyInvoices.txt','w');
     fwrite($file,$message);

@@ -290,7 +290,7 @@ function getCoordinate($parcelID, $db) {
     $stmt->execute([$driverID]);
     $driver = $stmt->fetch(PDO::FETCH_ASSOC);
     $address = $driver['lastKnowPosition'];
-    $geo = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address=".urlencode($address)."&sensor=false&key=AIzaSyB4VlCHHZgZ1rrsEY9S-LtYdMz-f858Dig");
+    $geo = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address=".urlencode($address)."&sensor=false&key=AIzaSyAtgbDVO3hASMchsL0gyj4b-Itpg5_u-_o");
     $geo = json_decode($geo, true);
     return $geo;
 }
@@ -415,28 +415,19 @@ function assginTask($driverID, $db) {
         $sql = "SELECT b.parcelID, c.id, c.address FROM customers c JOIN bookings b ON b.customerID = c.id WHERE b.parcelStatus=1;";
         $stmt = $db->prepare($sql);
         $stmt->execute();
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        $selectID;
+        $selectParcelID;
+        $minDis = 1000000000;
 
-        if(is_array($data[0])) {
-            $selectID = $data[0]['id'];
-            $selectParcelID = $data[0]['parcelID'];
-            $minDis = getDistace($address, $data[0]['address']);
-
-            if(count($data) > 1) {
-                for($i = 1;$i < count($data); $i++) {
-                    $temp = getDistace($address, $data[$i]['address']);
-                    if($temp < $minDis) {
-                        $selectID = $data[$i]['id'];
-                        $selectParcelID = $data[$i]['parcelID'];
-                        $minDis = $temp;
-                    }
-                }
+        while($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $temp = getDistace($address, $data['address']);
+            if($temp < $minDis) {
+                $selectID = $data['id'];
+                $selectParcelID = $data['parcelID'];
+                $minDis = $temp;
             }
-        } else {
-            $selectID = $data['id'];
-            $selectParcelID = $data['parcelID'];
-            $minDis = getDistace($address, $data['address']);
         }
+
         $sql = "INSERT INTO tasks (parcelID, customerID, driverID) VALUES(:parcelID, :customerID, :driverID)";
         $stmt = $db->prepare($sql);
         $stmt->bindValue(':parcelID', $selectParcelID);
@@ -447,10 +438,38 @@ function assginTask($driverID, $db) {
 }
 
 function getDistace($from, $to) {
-    $distanceData = file_get_contents("https://maps.googleapis.com/maps/api/distancematrix/json?&origins=".urlencode($from)."&destinations=".urlencode($to)."&key=AIzaSyB4VlCHHZgZ1rrsEY9S-LtYdMz-f858Dig");
+    $distanceData = file_get_contents("https://maps.googleapis.com/maps/api/distancematrix/json?&origins=".urlencode($from)."&destinations=".urlencode($to)."&key=AIzaSyAtgbDVO3hASMchsL0gyj4b-Itpg5_u-_o");
     $data = json_decode($distanceData);
     $distance = floor($data->rows[0]->elements[0]->distance->value / 1000);
     return $distance;
+}
+
+function calculatePrice($parcelID, $timeStamp, $db) {
+    $sql = "SELECT * FROM tasks WHERE parcelID = ?";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$parcelID]);
+    $ids = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $sql = "SELECT * FROM customers WHERE id = ?";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$ids['customerID']]);
+    $customerAddress = $stmt->fetch(PDO::FETCH_ASSOC);
+    $customerID = $customerAddress['id'];
+    $customerAddress = $customerAddress['address'];
+
+    $sql = "SELECT * FROM bookings WHERE parcelID = ?";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$parcelID]);
+    $receiverAddress = $stmt->fetch(PDO::FETCH_ASSOC);
+    $receiverAddress = $receiverAddress['receiverAddress'];
+
+    $price = getDistace($customerAddress, $receiverAddress);
+    $gst = $price * 0.1;
+    $deliverPrice = $price * 0.2;
+
+    $sql = "INSERT INTO invoices (parcelID, invoiceID, customerID, costAmount, gstAmount, deliveryAmount) VALUES(?,?,?,?,?,?)";
+    $stmt = $db->prepare($sql);
+    $result = $stmt->execute([$parcelID, $timeStamp, $customerID, $price, $gst, $deliverPrice]);
 }
 
 /* Update the task status (Picked Up and Delivered) */
@@ -494,7 +513,7 @@ function updateTask($type, $parcelID, $driver, $db) {
         $sql = "INSERT INTO parcel_location (parcelID, info, location) VALUES(?,?,?)";
         $stmt = $db->prepare($sql);
         $result = $stmt->execute([$parcelID, "Delivered", $address]);
-
+        calculatePrice($parcelID, $parcelID, $db);
         $_SESSION['message'] = "Parcel Successful Delivered";
     }
 }

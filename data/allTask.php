@@ -1,4 +1,5 @@
-<?php include("serverV2.php"); ?>
+<?php include("serverV2.php");
+assginTask($_SESSION['id'], $db); ?>
 <!DOCTYPE html>
 <html>
 
